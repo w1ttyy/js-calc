@@ -1,0 +1,14 @@
+    /* backgrounds */
+    --color-page-bg: #f1f1f1;
+    --color-surface: #dadada;        /* header + calculator body */
+    --color-display-bg: #faedde;     /* very faint orange */
+ 
+    /* borders */
+    --color-border-strong: #575757;  /* calculator + display */
+    --color-border-soft: #979797;    /* buttons */
+ 
+    /* buttons */
+    --color-btn-bg: #e9e9e9;
+    --color-btn-hover: #c4c4c4;
+    --color-accent: #f0973d;         /* orange buttons */
+    --color-accent-hover: #d9761a;
