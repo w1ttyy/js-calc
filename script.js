@@ -1,3 +1,4 @@
+// ===== Math operations =====
 function add(a, b) {
   return a + b;
 }
@@ -10,12 +11,6 @@ function multiply(a, b) {
 function divide(a, b) {
   return a / b;
 }
-
-let num1 = "";
-let num2 = "";
-let operator = "";
-result = "0";
-
 function operate(operator, a, b) {
   switch (operator) {
     case "+":
@@ -31,62 +26,107 @@ function operate(operator, a, b) {
   }
 }
 
+// ===== State =====
+let num1 = "";
+let num2 = "";
+let operator = "";
+let result = "0";
+let currentOp = "0";
+let lastOp = "";
+
+// ===== State helpers =====
+function appendToCurrentNumber(char) {
+  if (operator === "") {
+    num1 += char;
+  } else {
+    num2 += char;
+  }
+}
+function getCurrentNumber() {
+  if (operator === "") {
+    return num1;
+  }
+  return num2;
+}
+
+// ===== DOM elements =====
 const digitButtons = document.querySelectorAll(".digit");
 const decimalButton = document.querySelector(".decimal");
-const operatorButton = document.querySelectorAll(".operator");
+const operatorButtons = document.querySelectorAll(".operator");
 const resultButton = document.querySelector(".result");
 const clearButton = document.querySelector(".clear");
 const deleteButton = document.querySelector(".delete");
+const lastOpDiv = document.querySelector(".lastOp");
+const currentOpDiv = document.querySelector(".currentOp");
 
-clearButton.addEventListener("click", () => {
+// ===== Display =====
+function updateLastOp() {
+  lastOpDiv.textContent = num1 + operator + num2;
+}
+
+function updateCurrentOp() {
+  currentOpDiv.textContent = num1 + operator + num2;
+}
+
+function clearLastOp() {}
+function clearCurrentOp() {
+  currentOpDiv.textContent = "";
+}
+
+// ===== Handlers =====
+function handleClear() {
   num1 = "";
   num2 = "";
   operator = "";
   result = "0";
-});
+  updateCurrentOp();
+  updateLastOp();
+}
 
-deleteButton.addEventListener("click", () => {
+function handleDelete() {
   if (operator === "") {
     num1 = num1.slice(0, -1);
-    console.log(num1);
+    updateCurrentOp();
   } else {
     num2 = num2.slice(0, -1);
-    console.log(num2);
+    updateCurrentOp();
   }
-});
+}
 
-resultButton.addEventListener("click", () => {
+function handleResult() {
   result = operate(operator, Number(num1), Number(num2));
   console.log(result);
-});
+  updateLastOp();
+}
 
-decimalButton.addEventListener("click", () => {
-  if (!num1.includes(".") && operator === "") {
-    num1 += decimalButton.textContent;
-    console.log(num1);
-  } else {
-    num2 += decimalButton.textContent;
-    console.log(num2);
+function handleDecimal() {
+  if (!getCurrentNumber().includes(".")) {
+    appendToCurrentNumber(".");
   }
-});
+  updateCurrentOp();
+}
 
+function handleDigit(char) {
+  appendToCurrentNumber(char);
+  updateCurrentOp();
+}
+
+function handleOperator(op) {
+  if (operator === "") {
+    operator = op;
+  }
+  updateLastOp();
+  clearCurrentOp();
+}
+
+// ===== Event listeners =====
+deleteButton.addEventListener("click", handleDelete);
+clearButton.addEventListener("click", handleClear);
+resultButton.addEventListener("click", handleResult);
+decimalButton.addEventListener("click", handleDecimal);
 digitButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (operator === "") {
-      num1 += button.textContent;
-      console.log(num1);
-    } else {
-      num2 += button.textContent;
-      console.log(num2);
-    }
-  });
+  button.addEventListener("click", () => handleDigit(button.textContent));
 });
-
-operatorButton.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (operator === "") {
-      operator += button.textContent;
-    }
-    console.log(operator);
-  });
+operatorButtons.forEach((button) => {
+  button.addEventListener("click", () => handleOperator(button.textContent));
 });

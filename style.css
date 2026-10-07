@@ -45,22 +45,47 @@ header .main {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    width: 75%;
-    height: 75px;
+    flex-direction: column;
+    width: 90%;
+    height: 100px;
     padding: 10px 30px;
     border: rgb(87, 87, 87) 5px solid;
     background-color: #faedde;
     border-radius: 5px;
+    padding: 0;
+}
+
+.lastOp,
+.currentOp {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    border: rgb(87, 87, 87) 1px solid;
+
+}
+
+.lastOp {
+    height: 40%;
+    width: 100%;
+    font-weight: 550;
+    font-size: 20px;
+}
+
+.currentOp {
+    height: 60%;
+    width: 100%;
+    font-size: 30px;
+    font-weight: 600;
 }
 
 .keyboard {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    margin: 20px;
     border-radius: 5px;
     flex-wrap: wrap;
     gap: 10px;
+    padding: 0;
 }
 
 button {
@@ -69,6 +94,7 @@ button {
     border: rgb(151, 151, 151) 2px solid;
     font-size: 18px;
     font-weight: 600;
+    padding: 0;
 }
 
 .clear,
