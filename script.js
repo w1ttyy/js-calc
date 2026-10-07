@@ -31,7 +31,7 @@ let num1 = "";
 let num2 = "";
 let operator = "";
 let result = "0";
-let currentOp = "0";
+let currentOp = "";
 let lastOp = "";
 
 // ===== State helpers =====
@@ -56,21 +56,21 @@ const operatorButtons = document.querySelectorAll(".operator");
 const resultButton = document.querySelector(".result");
 const clearButton = document.querySelector(".clear");
 const deleteButton = document.querySelector(".delete");
-const lastOpDiv = document.querySelector(".lastOp");
-const currentOpDiv = document.querySelector(".currentOp");
+const operationDiv = document.querySelector(".operation");
+const resultDiv = document.querySelector(".dispResult");
 
 // ===== Display =====
-function updateLastOp() {
-  lastOpDiv.textContent = num1 + operator + num2;
+function updateOperationDiv() {
+  operationDiv.textContent = num1 + operator + num2;
 }
 
-function updateCurrentOp() {
-  currentOpDiv.textContent = num1 + operator + num2;
+function updateResultDiv() {
+  resultDiv.textContent = result;
 }
 
 function clearLastOp() {}
 function clearCurrentOp() {
-  currentOpDiv.textContent = "";
+  resultDiv.textContent = "";
 }
 
 // ===== Handlers =====
@@ -79,43 +79,43 @@ function handleClear() {
   num2 = "";
   operator = "";
   result = "0";
-  updateCurrentOp();
-  updateLastOp();
+  updateResultDiv();
+  updateOperationDiv();
 }
 
 function handleDelete() {
   if (operator === "") {
     num1 = num1.slice(0, -1);
-    updateCurrentOp();
+    updateResultDiv();
   } else {
     num2 = num2.slice(0, -1);
-    updateCurrentOp();
+    updateResultDiv();
   }
 }
 
 function handleResult() {
   result = operate(operator, Number(num1), Number(num2));
   console.log(result);
-  updateLastOp();
+  updateResultDiv();
 }
 
 function handleDecimal() {
   if (!getCurrentNumber().includes(".")) {
     appendToCurrentNumber(".");
   }
-  updateCurrentOp();
+  updateOperationDiv();
 }
 
 function handleDigit(char) {
   appendToCurrentNumber(char);
-  updateCurrentOp();
+  updateOperationDiv();
 }
 
 function handleOperator(op) {
   if (operator === "") {
     operator = op;
   }
-  updateLastOp();
+  updateOperationDiv();
   clearCurrentOp();
 }
 

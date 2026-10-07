@@ -55,25 +55,22 @@ header .main {
     padding: 0;
 }
 
-.lastOp,
-.currentOp {
+.operation,
+.dispResult {
     display: flex;
     justify-content: end;
     align-items: end;
-    border: rgb(87, 87, 87) 1px solid;
-
+    width: 98%;
 }
 
-.lastOp {
+.operation {
     height: 40%;
-    width: 100%;
     font-weight: 550;
     font-size: 20px;
 }
 
-.currentOp {
+.dispResult {
     height: 60%;
-    width: 100%;
     font-size: 30px;
     font-weight: 600;
 }
