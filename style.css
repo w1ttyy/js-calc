@@ -71,7 +71,8 @@ button {
     font-weight: 600;
 }
 
-.clear {
+.clear,
+.delete {
     height: 75px;
     width: 160px;
     background-color: #f0973d;
@@ -83,7 +84,8 @@ button {
 
 .digit,
 .operator,
-.decimal {
+.decimal,
+.result {
     height: 75px;
     width: 75px;
     font-size: 24px;
