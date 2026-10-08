@@ -101,7 +101,8 @@ button {
     background-color: #f0973d;
 }
 
-.clear:hover {
+.clear:hover,
+.delete:hover {
     background-color: #d9761a;
 }
 
@@ -116,7 +117,8 @@ button {
 }
 
 .digit:hover,
-.decimal:hover {
+.decimal:hover,
+.result:hover {
     background-color: #c4c4c4;
 }
 

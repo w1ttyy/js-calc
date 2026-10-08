@@ -30,9 +30,8 @@ function operate(operator, a, b) {
 let num1 = "";
 let num2 = "";
 let operator = "";
-let result = "0";
-let currentOp = "";
-let lastOp = "";
+let result = "";
+let operation = "0";
 
 // ===== State helpers =====
 function appendToCurrentNumber(char) {
@@ -61,16 +60,12 @@ const resultDiv = document.querySelector(".dispResult");
 
 // ===== Display =====
 function updateOperationDiv() {
-  operationDiv.textContent = num1 + operator + num2;
+  operation = num1 + operator + num2;
+  operationDiv.textContent = operation;
 }
 
 function updateResultDiv() {
   resultDiv.textContent = result;
-}
-
-function clearLastOp() {}
-function clearCurrentOp() {
-  resultDiv.textContent = "";
 }
 
 // ===== Handlers =====
@@ -78,18 +73,23 @@ function handleClear() {
   num1 = "";
   num2 = "";
   operator = "";
-  result = "0";
-  updateResultDiv();
-  updateOperationDiv();
+  result = "";
+  operation = "0";
+  operationDiv.textContent = operation;
+  resultDiv.textContent = result;
 }
 
 function handleDelete() {
-  if (operator === "") {
+  if (operator === "" && operation.length > 1) {
     num1 = num1.slice(0, -1);
-    updateResultDiv();
-  } else {
+    updateOperationDiv();
+  } else if (operator !== "") {
     num2 = num2.slice(0, -1);
-    updateResultDiv();
+    updateOperationDiv();
+  } else if (num1 === "") {
+    return;
+  } else if (operation.length === 1) {
+    handleClear();
   }
 }
 
