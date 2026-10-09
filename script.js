@@ -61,7 +61,7 @@ const resultDiv = document.querySelector(".dispResult");
 // ===== Display =====
 function updateOperationDiv() {
   operation = num1 + operator + num2;
-  operationDiv.textContent = operation;
+  operationDiv.textContent = operation || "0";
 }
 
 function updateResultDiv() {
@@ -80,22 +80,23 @@ function handleClear() {
 }
 
 function handleDelete() {
-  if (operator === "" && operation.length > 1) {
-    num1 = num1.slice(0, -1);
-    updateOperationDiv();
-  } else if (operator !== "") {
+  if (num2 !== "") {
     num2 = num2.slice(0, -1);
-    updateOperationDiv();
-  } else if (num1 === "") {
-    return;
-  } else if (operation.length === 1) {
-    handleClear();
+  } else if (operator !== "") {
+    operator = "";
+  } else if (num1 !== "") {
+    num1 = num1.slice(0, -1);
   }
+  updateOperationDiv();
 }
 
 function handleResult() {
+  operationDiv.textContent = operation + "=";
+  if (operator === "÷" && num2 == "0") {
+    resultDiv.textContent = "MATH ERROR";
+    return;
+  }
   result = operate(operator, Number(num1), Number(num2));
-  console.log(result);
   updateResultDiv();
 }
 
