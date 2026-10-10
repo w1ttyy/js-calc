@@ -27,7 +27,6 @@ function operate(operator, a, b) {
 }
 
 function roundResult(value) {
-  // 8 decimal places is enough and keeps long decimals off the display
   return Math.round(value * 1e8) / 1e8;
 }
 
@@ -35,7 +34,7 @@ function roundResult(value) {
 let num1 = "";
 let num2 = "";
 let operator = "";
-let isResultShown = false; // true after "=" or an error, so a new digit starts fresh
+let isResultShown = false;
 
 // ===== State helpers =====
 function getCurrentNumber() {
@@ -79,7 +78,6 @@ function evaluate() {
   return true;
 }
 
-// Starts a new calculation if a result (or error) is on the display
 function startFreshIfResultShown() {
   if (isResultShown) {
     num1 = "";
@@ -95,8 +93,8 @@ const operatorButtons = document.querySelectorAll(".operator");
 const resultButton = document.querySelector(".result");
 const clearButton = document.querySelector(".clear");
 const deleteButton = document.querySelector(".delete");
-const operationDiv = document.querySelector(".operation"); // top, small
-const resultDiv = document.querySelector(".dispResult"); // bottom, big
+const operationDiv = document.querySelector(".operation");
+const resultDiv = document.querySelector(".dispResult");
 
 // ===== Display =====
 function updateOperationDiv() {
@@ -128,22 +126,18 @@ function handleDigit(char) {
 }
 
 function handleOperator(op) {
-  // nothing to operate on yet
   if (num1 === "") return;
 
-  // full pair already entered (12 + 7 −) → evaluate it first
   if (num2 !== "") {
     if (!evaluate()) return;
   }
 
-  // also covers consecutive operators: the last one wins
   operator = op;
   isResultShown = false;
   updateOperationDiv();
 }
 
 function handleResult() {
-  // "=" only works with two numbers and an operator
   if (num1 === "" || operator === "" || num2 === "") return;
 
   const expression = num1 + operator + num2;
@@ -153,7 +147,6 @@ function handleResult() {
   }
 }
 
-// ===== Handlers: extra credit (decimal, backspace) =====
 function handleDecimal() {
   startFreshIfResultShown();
   if (getCurrentNumber() === "") {
@@ -166,7 +159,6 @@ function handleDecimal() {
 }
 
 function handleDelete() {
-  // deleting from a result would be confusing, so start fresh instead
   if (isResultShown) {
     handleClear();
     return;
@@ -182,6 +174,36 @@ function handleDelete() {
   updateOperationDiv();
 }
 
+const keyToOperator = {
+  "+": "+",
+  "-": "−",
+  "*": "×",
+  "/": "÷",
+};
+
+function handleKeydown(event) {
+  if (event.ctrlKey || event.metaKey) return;
+
+  const key = event.key;
+  const op = keyToOperator[key];
+
+  if (/^[0-9]$/.test(key)) {
+    handleDigit(key);
+  } else if (key === "." || key === ",") {
+    handleDecimal();
+  } else if (op) {
+    event.preventDefault(); // "/" opens quick find in Firefox
+    handleOperator(op);
+  } else if (key === "Enter" || key === "=") {
+    event.preventDefault(); // stops Enter from also "clicking" a focused button
+    handleResult();
+  } else if (key === "Backspace") {
+    handleDelete();
+  } else if (key === "Escape") {
+    handleClear();
+  }
+}
+
 // ===== Event listeners =====
 clearButton.addEventListener("click", handleClear);
 resultButton.addEventListener("click", handleResult);
@@ -191,8 +213,7 @@ digitButtons.forEach((button) => {
 operatorButtons.forEach((button) => {
   button.addEventListener("click", () => handleOperator(button.textContent));
 });
-
-// extra credit
+document.addEventListener("keydown", handleKeydown);
 decimalButton.addEventListener("click", handleDecimal);
 deleteButton.addEventListener("click", handleDelete);
 
