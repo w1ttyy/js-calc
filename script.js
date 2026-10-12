@@ -26,14 +26,24 @@ function operate(operator, a, b) {
   }
 }
 
+function roundResult(value) {
+  return Math.round(value * 1e8) / 1e8;
+}
+
 // ===== State =====
 let num1 = "";
 let num2 = "";
 let operator = "";
-let result = "";
-let operation = "0";
+let isResultShown = false;
 
 // ===== State helpers =====
+function getCurrentNumber() {
+  if (operator === "") {
+    return num1;
+  }
+  return num2;
+}
+
 function appendToCurrentNumber(char) {
   if (operator === "") {
     num1 += char;
@@ -41,11 +51,39 @@ function appendToCurrentNumber(char) {
     num2 += char;
   }
 }
-function getCurrentNumber() {
-  if (operator === "") {
-    return num1;
+
+function resetState() {
+  num1 = "";
+  num2 = "";
+  operator = "";
+  isResultShown = false;
+}
+
+// Calculates num1 operator num2, shows the result in the bottom line
+// and stores it as the new num1.
+// Returns false when it can't (division by zero), so callers can stop.
+function evaluate() {
+  const a = Number(num1);
+  const b = Number(num2);
+
+  if (operator === "÷" && b === 0) {
+    showError();
+    return false;
   }
-  return num2;
+
+  num1 = String(roundResult(operate(operator, a, b)));
+  num2 = "";
+  operator = "";
+  updateResultDiv(num1);
+  return true;
+}
+
+function startFreshIfResultShown() {
+  if (isResultShown) {
+    num1 = "";
+    isResultShown = false;
+    updateResultDiv("");
+  }
 }
 
 // ===== DOM elements =====
@@ -60,26 +98,72 @@ const resultDiv = document.querySelector(".dispResult");
 
 // ===== Display =====
 function updateOperationDiv() {
-  operation = num1 + operator + num2;
-  operationDiv.textContent = operation || "0";
+  operationDiv.textContent = num1 + operator + num2 || "0";
 }
 
-function updateResultDiv() {
-  resultDiv.textContent = result;
+function updateResultDiv(text) {
+  resultDiv.textContent = text;
+}
+
+function showError() {
+  resetState();
+  isResultShown = true; // next digit clears the message
+  updateOperationDiv();
+  updateResultDiv("MATH ERROR");
 }
 
 // ===== Handlers =====
 function handleClear() {
-  num1 = "";
-  num2 = "";
-  operator = "";
-  result = "";
-  operation = "0";
-  operationDiv.textContent = operation;
-  resultDiv.textContent = result;
+  resetState();
+  updateOperationDiv();
+  updateResultDiv("");
+}
+
+function handleDigit(char) {
+  startFreshIfResultShown();
+  appendToCurrentNumber(char);
+  updateOperationDiv();
+}
+
+function handleOperator(op) {
+  if (num1 === "") return;
+
+  if (num2 !== "") {
+    if (!evaluate()) return;
+  }
+
+  operator = op;
+  isResultShown = false;
+  updateOperationDiv();
+}
+
+function handleResult() {
+  if (num1 === "" || operator === "" || num2 === "") return;
+
+  const expression = num1 + operator + num2;
+  if (evaluate()) {
+    isResultShown = true;
+    operationDiv.textContent = expression + "=";
+  }
+}
+
+function handleDecimal() {
+  startFreshIfResultShown();
+  if (getCurrentNumber() === "") {
+    appendToCurrentNumber("0");
+  }
+  if (!getCurrentNumber().includes(".")) {
+    appendToCurrentNumber(".");
+  }
+  updateOperationDiv();
 }
 
 function handleDelete() {
+  if (isResultShown) {
+    handleClear();
+    return;
+  }
+
   if (num2 !== "") {
     num2 = num2.slice(0, -1);
   } else if (operator !== "") {
@@ -90,44 +174,48 @@ function handleDelete() {
   updateOperationDiv();
 }
 
-function handleResult() {
-  operationDiv.textContent = operation + "=";
-  if (operator === "÷" && num2 == "0") {
-    resultDiv.textContent = "MATH ERROR";
-    return;
-  }
-  result = operate(operator, Number(num1), Number(num2));
-  updateResultDiv();
-}
+const keyToOperator = {
+  "+": "+",
+  "-": "−",
+  "*": "×",
+  "/": "÷",
+};
 
-function handleDecimal() {
-  if (!getCurrentNumber().includes(".")) {
-    appendToCurrentNumber(".");
-  }
-  updateOperationDiv();
-}
+function handleKeydown(event) {
+  if (event.ctrlKey || event.metaKey) return;
 
-function handleDigit(char) {
-  appendToCurrentNumber(char);
-  updateOperationDiv();
-}
+  const key = event.key;
+  const op = keyToOperator[key];
 
-function handleOperator(op) {
-  if (operator === "") {
-    operator = op;
+  if (/^[0-9]$/.test(key)) {
+    handleDigit(key);
+  } else if (key === "." || key === ",") {
+    handleDecimal();
+  } else if (op) {
+    event.preventDefault(); // "/" opens quick find in Firefox
+    handleOperator(op);
+  } else if (key === "Enter" || key === "=") {
+    event.preventDefault(); // stops Enter from also "clicking" a focused button
+    handleResult();
+  } else if (key === "Backspace") {
+    handleDelete();
+  } else if (key === "Escape") {
+    handleClear();
   }
-  updateOperationDiv();
-  clearCurrentOp();
 }
 
 // ===== Event listeners =====
-deleteButton.addEventListener("click", handleDelete);
 clearButton.addEventListener("click", handleClear);
 resultButton.addEventListener("click", handleResult);
-decimalButton.addEventListener("click", handleDecimal);
 digitButtons.forEach((button) => {
   button.addEventListener("click", () => handleDigit(button.textContent));
 });
 operatorButtons.forEach((button) => {
   button.addEventListener("click", () => handleOperator(button.textContent));
 });
+document.addEventListener("keydown", handleKeydown);
+decimalButton.addEventListener("click", handleDecimal);
+deleteButton.addEventListener("click", handleDelete);
+
+// ===== Init =====
+updateOperationDiv();

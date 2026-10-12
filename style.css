@@ -4,21 +4,26 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: "Space Grotesk", sans-serif;
 }
 
 header {
     display: flex;
     background-color: #dadada;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     height: 75px;
     padding: 0px 10px;
 }
 
 header .main {
+    font-family: "Space Grotesk", sans-serif;
     font-size: 42px;
-    font-weight: 900;
-    margin-left: 100px;
+    font-weight: 700;
+}
+
+.hero {
+    flex: 1;
 }
 
 .container {
@@ -48,7 +53,6 @@ header .main {
     flex-direction: column;
     width: 90%;
     height: 100px;
-    padding: 10px 30px;
     border: rgb(87, 87, 87) 5px solid;
     background-color: #faedde;
     border-radius: 5px;
@@ -61,6 +65,7 @@ header .main {
     justify-content: end;
     align-items: end;
     width: 98%;
+    overflow: hidden;
 }
 
 .operation {
@@ -92,6 +97,7 @@ button {
     font-size: 18px;
     font-weight: 600;
     padding: 0;
+    font-family: inherit;
 }
 
 .clear,
@@ -118,10 +124,17 @@ button {
 
 .digit:hover,
 .decimal:hover,
-.result:hover {
+.result:hover,
+.operator:hover {
     background-color: #c4c4c4;
 }
 
-.operator:hover {
-    background-color: #c4c4c4;
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    background-color: #dadada;
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 500;
 }
